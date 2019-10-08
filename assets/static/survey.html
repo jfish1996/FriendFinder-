@@ -20,6 +20,58 @@
 
 <body>
 
+  <style>
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content/Box */
+.modal-content {
+  background-color: #fefefe;
+  margin: 15% auto; /* 15% from the top and centered */
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%; /* Could be more or less, depending on screen size */
+}
+
+/* The Close Button */
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+  </style>
+
+
+<!-- The Modal -->
+<div id="myModal" class="modal">
+
+  <!-- Modal content -->
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <p id="modalText">Some text in the Modal..</p>
+  </div>
+
+</div>
+
   <div class="container">
 
     <h2>Survey Questions</h2>
@@ -272,8 +324,19 @@
 
 <script type="text/javascript">
   $(document).ready(function () {
+    //modal Vars being set up-------------------------------
+    var dataDisplay =false;
+    var modal = document.getElementById("myModal");
+    var modalText = document.getElementById("modalText");
+    // Get the <span> element that closes the modal
+    var spann = document.getElementsByClassName("close")[0];
+
+
+
+    //on click of my submit button
     $("#submit").click(function () {
 
+      //grabbing all of the values from my survey
       var name = $("#name").val()
       var q1 = $("#q1").val()
       var q2 = $("#q2").val()
@@ -286,7 +349,7 @@
       var q9 = $("#q9").val()
       var q10 = $("#q10").val()
 
-
+      //then putting those values into an object that I can ship out
       var friend = {
         name,
         scores: [
@@ -304,13 +367,43 @@
 
 
 
-      }
+      }//this is where I ship out to my post route on my server
+      
       $.post("/api/friends", friend, function(data){
+        dataDisplay = true;
+
+        if(!dataDisplay){
+
+        } else {
+          modal.style.display = "block";
+          modalText.textContent = "New BFF!: " + data.name;
+
+        }
+
+        //this is not important for the example lol
         console.log("HTML console.log",data)
+
       })
 
     });
+
+
+
+    spann.onclick = function() {
+    modal.style.display = "none";
+  }
+  
+  // When the user clicks anywhere outside of the modal, close it
+  window.onclick = function(event) {
+    if (event.target == modal) {
+      modal.style.display = "none";
+    }
+  }
+
   });
+
+
+
 
 </script>
 
